@@ -1,0 +1,36 @@
+[package]
+name = "ims_oa"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[profile.release]
+codegen-units = 1
+debug = false
+lto = true
+opt-level = "z"   # Optimize for size.
+panic = 'abort'
+
+[workspace]
+members = ["api", "entity", "service", "middleware", "common"]
+
+[workspace.dependencies]
+axum = "0.6.20"
+dotenvy = "0.15.7"
+tokio = { version = "1.33.0", features = ["full"] }
+serde = { version = "1.0.192", features = ["derive"] }
+serde_json = "1.0.108"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
+tower = { version = "0.4.13", features = ["timeout"] }
+tower-http = { version = "0.4.4", features = ["trace"] }
+utoipa = { version = "4.0.0", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "4.0.0", features = ["axum"] }
+thiserror = "1.0.50"
+
+[dependencies]
+dotenvy.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+api = { path = "api" }
