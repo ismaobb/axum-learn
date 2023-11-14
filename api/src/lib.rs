@@ -9,6 +9,7 @@ use axum::{
 	routing::get,
 	BoxError, Extension, Json, Router, Server,
 };
+use sea_orm::DbConn;
 use serde_json::json;
 
 use tower_http::trace::{DefaultMakeSpan, DefaultOnRequest, DefaultOnResponse, TraceLayer};
@@ -25,7 +26,10 @@ pub async fn bootstrap() {
 		.make_span_with(DefaultMakeSpan::new().level(Level::INFO))
 		.on_request(DefaultOnRequest::new().level(Level::INFO))
 		.on_response(DefaultOnResponse::new().level(Level::INFO));
-	let state = AppState { pool: 10 };
+
+	let state = AppState {
+		conn: database::init_db().await,
+	};
 
 	// build our application with a single route
 	let app = Router::new()
@@ -52,7 +56,7 @@ pub async fn bootstrap() {
 
 #[derive(Clone)]
 pub struct AppState {
-	pool: u32,
+	conn: DbConn,
 }
 
 async fn handle_timeout_error(

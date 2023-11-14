@@ -1,15 +1,11 @@
 [package]
-name = "service"
+name = "database"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-entity = { path = "../entity" }
-utoipa.workspace = true
 sea-orm.workspace = true
-serde.workspace = true
-serde_json.workspace = true
-common = { path = "../common" }
+dotenvy.workspace = true
 tracing.workspace = true

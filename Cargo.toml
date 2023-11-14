@@ -13,10 +13,11 @@ opt-level = "z"   # Optimize for size.
 panic = 'abort'
 
 [workspace]
-members = ["api", "entity", "service", "middleware", "common"]
+members = ["api", "entity", "service", "middleware", "common", "database"]
 
 [workspace.dependencies]
 axum = "0.6.20"
+axum-extra = { version = "0.8.0", features = ["query"] }
 dotenvy = "0.15.7"
 tokio = { version = "1.33.0", features = ["full"] }
 serde = { version = "1.0.192", features = ["derive"] }
@@ -28,6 +29,11 @@ tower-http = { version = "0.4.4", features = ["trace"] }
 utoipa = { version = "4.0.0", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "4.0.0", features = ["axum"] }
 thiserror = "1.0.50"
+sea-orm = { version = "0.12.5", features = [
+    "runtime-tokio-native-tls",
+    "sqlx-mysql",
+    "macros",
+] }
 
 [dependencies]
 dotenvy.workspace = true
