@@ -29,3 +29,9 @@ pub struct CreateUserDto {
 	pub dep: String,
 	pub line: Value,
 }
+
+#[derive(Debug, Serialize, Deserialize, ToSchema, Clone)]
+pub struct PatchUserDto {
+	pub role_type: Option<i32>,
+	pub name: Option<String>,
+}

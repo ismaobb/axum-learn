@@ -1,5 +1,5 @@
 use axum::Router;
-use service::user::dto::{CreateUserDto, UserResponse};
+use service::user::dto::{CreateUserDto, PatchUserDto, UserResponse};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
@@ -11,12 +11,13 @@ use crate::user;
         user::get::find_one,
         user::get::find_all,
         user::post::create,
+        user::patch::patch_one
     ),
     tags(
         (name = "user", description = "user"),
         (name = "user1", description = "user")
     ),
-    components(schemas(entity::user::Model,UserResponse,CreateUserDto))
+    components(schemas(entity::user::Model,UserResponse,CreateUserDto,PatchUserDto))
 )]
 struct ApiDoc;
 

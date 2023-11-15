@@ -11,6 +11,12 @@ pub enum ApiError {
 	UserExist,
 }
 
+impl From<sea_orm::DbErr> for ApiError {
+	fn from(value: sea_orm::DbErr) -> Self {
+		Self::DbError(value.to_string())
+	}
+}
+
 impl IntoResponse for ApiError {
 	fn into_response(self) -> axum::response::Response {
 		let code = match self {

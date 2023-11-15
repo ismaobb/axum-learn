@@ -8,12 +8,15 @@ use utoipa::ToSchema;
 #[sea_orm(table_name = "user")]
 pub struct Model {
 	#[sea_orm(primary_key)]
+	#[serde(skip_deserializing)]
 	pub id: i32,
 	pub role_type: Option<i32>,
 	pub name: String,
 	#[sea_orm(unique)]
 	pub user: String,
+	#[serde(skip_serializing)]
 	pub password: String,
+	#[serde(skip_serializing)]
 	pub sign: String,
 	pub dep: String,
 	pub line: Option<serde_json::Value>,
