@@ -7,8 +7,8 @@ pub enum ApiError {
 	DbError(String),
 	#[error("User {0} Not Found")]
 	UserNotFound(String),
-	#[error("User Exist")]
-	UserExist,
+	#[error("User `{0}` Exist")]
+	UserExist(String),
 }
 
 impl From<sea_orm::DbErr> for ApiError {

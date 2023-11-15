@@ -34,4 +34,5 @@ pub struct CreateUserDto {
 pub struct PatchUserDto {
 	pub role_type: Option<i32>,
 	pub name: Option<String>,
+	pub password: Option<String>,
 }

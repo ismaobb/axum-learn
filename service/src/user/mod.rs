@@ -3,11 +3,11 @@ pub mod dto;
 use common::api_error::ApiError;
 use entity::user::{self, Entity as User};
 use sea_orm::{
-	ActiveModelTrait, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, Condition, DbConn, EntityTrait, Iterable, QueryFilter, QuerySelect,
-	TryIntoModel,
+	ActiveModelTrait, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, Condition, DbConn, EntityTrait, Iterable, PaginatorTrait, QueryFilter,
+	QuerySelect,
 };
 
-use self::dto::{CreateUserDto, PatchUserDto, UserQuery, UserResponse};
+use self::dto::{PatchUserDto, UserQuery, UserResponse};
 
 pub struct UserService;
 
@@ -38,16 +38,28 @@ impl UserService {
 			.map_err(|error| ApiError::DbError(error.to_string()))
 	}
 
-	pub async fn create(_conn: &DbConn, _create_user: CreateUserDto) -> Result<user::Model, ApiError> {
+	pub async fn create(conn: &DbConn, create_user: user::Model) -> Result<user::Model, ApiError> {
+		let count = User::find()
+			.filter(user::Column::User.eq(create_user.user.clone()))
+			.count(conn)
+			.await
+			.map_err(|error| ApiError::DbError(error.to_string()))?;
+		if count > 0 {
+			return Err(ApiError::UserExist(create_user.user));
+		}
+
 		let u = user::ActiveModel {
 			id: NotSet,
-			name: sea_orm::ActiveValue::Set("maobb".to_string()),
-			..Default::default()
+			name: Set(create_user.name),
+			line: Set(create_user.line),
+			role_type: Set(create_user.role_type),
+			user: Set(create_user.user),
+			password: Set(create_user.password),
+			dep: Set(create_user.dep),
+			sign: Set("sign".to_string()),
 		};
 
-		let u1 = u.try_into_model().map_err(|error| ApiError::DbError(error.to_string()))?;
-		// let user = u.insert(conn).await.map_err(|error| ApiError::DbError(error.to_string()))?;
-		Ok(u1)
+		u.insert(conn).await.map_err(|error| ApiError::DbError(error.to_string()))
 	}
 
 	pub async fn patch_one(conn: &DbConn, id: i32, payload: PatchUserDto) -> Result<user::Model, ApiError> {
@@ -62,8 +74,9 @@ impl UserService {
 		if payload.name.is_some() {
 			user.name = Set(payload.name.unwrap());
 		}
-		// user.password = Set(payload.password);
-		// user.line = Set(payload.line);
+		if payload.password.is_some() {
+			user.password = Set(payload.password.unwrap());
+		}
 		user.update(conn).await.map_err(|error| ApiError::DbError(error.to_string()))
 	}
 }
