@@ -4,6 +4,6 @@ hard_tabs = true
 edition = "2021"
 
 # For recording
-max_width = 150
+max_width = 120
 # chain_width = 40
 # array_width = 40

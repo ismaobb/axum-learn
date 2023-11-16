@@ -3,8 +3,8 @@ pub mod dto;
 use common::api_error::ApiError;
 use entity::user::{self, Entity as User};
 use sea_orm::{
-	ActiveModelTrait, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, Condition, DbConn, EntityTrait, Iterable, PaginatorTrait, QueryFilter,
-	QuerySelect,
+	ActiveModelTrait, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, Condition, DbConn, EntityTrait, Iterable,
+	PaginatorTrait, QueryFilter, QuerySelect,
 };
 
 use self::dto::{PatchUserDto, UserQuery, UserResponse};
@@ -29,7 +29,11 @@ impl UserService {
 					.add_option(query.name.map(|name| user::Column::Name.eq(name)))
 					.add_option(query.user.map(|user| user::Column::User.eq(user)))
 					.add_option(query.role_type.map(|role_type| user::Column::RoleType.eq(role_type)))
-					.add_option(query.role_type_not.map(|role_type_not| user::Column::RoleType.is_not_in(role_type_not))),
+					.add_option(
+						query
+							.role_type_not
+							.map(|role_type_not| user::Column::RoleType.is_not_in(role_type_not)),
+					),
 			)
 			.columns(user::Column::iter().filter(|col| !matches!(col, user::Column::Password | user::Column::Sign)))
 			.into_model::<UserResponse>()
@@ -39,12 +43,13 @@ impl UserService {
 	}
 
 	pub async fn create(conn: &DbConn, create_user: user::Model) -> Result<user::Model, ApiError> {
-		let count = User::find()
+		let exist = User::find()
 			.filter(user::Column::User.eq(create_user.user.clone()))
 			.count(conn)
 			.await
-			.map_err(|error| ApiError::DbError(error.to_string()))?;
-		if count > 0 {
+			.is_ok_and(|count| count > 0);
+
+		if exist {
 			return Err(ApiError::UserExist(create_user.user));
 		}
 
@@ -59,7 +64,9 @@ impl UserService {
 			sign: Set("sign".to_string()),
 		};
 
-		u.insert(conn).await.map_err(|error| ApiError::DbError(error.to_string()))
+		u.insert(conn)
+			.await
+			.map_err(|error| ApiError::DbError(error.to_string()))
 	}
 
 	pub async fn patch_one(conn: &DbConn, id: i32, payload: PatchUserDto) -> Result<user::Model, ApiError> {
@@ -77,6 +84,8 @@ impl UserService {
 		if payload.password.is_some() {
 			user.password = Set(payload.password.unwrap());
 		}
-		user.update(conn).await.map_err(|error| ApiError::DbError(error.to_string()))
+		user.update(conn)
+			.await
+			.map_err(|error| ApiError::DbError(error.to_string()))
 	}
 }

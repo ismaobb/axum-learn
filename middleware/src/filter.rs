@@ -10,7 +10,11 @@ pub async fn http_exception(res: Response) -> impl IntoResponse {
 	if let Some(err) = service_error {
 		tracing::error!("{}", err.to_owned().to_string());
 
-		(res.status(), Json(json!({"message:":err.to_string().to_owned(),"code":-2}))).into_response()
+		(
+			res.status(),
+			Json(json!({"message:":err.to_string().to_owned(),"code":-2})),
+		)
+			.into_response()
 	} else {
 		res
 	}

@@ -16,7 +16,10 @@ use crate::AppState;
     ),
     tag = "user",
 )]
-pub async fn find_one(Extension(state): Extension<AppState>, Path(id): Path<i32>) -> Result<ApiOk<UserResponse>, ApiError> {
+pub async fn find_one(
+	Extension(state): Extension<AppState>,
+	Path(id): Path<i32>,
+) -> Result<ApiOk<UserResponse>, ApiError> {
 	let user = service::user::UserService::find_one(&state.conn, id).await?;
 	Ok(ApiOk(user))
 }
@@ -30,7 +33,10 @@ pub async fn find_one(Extension(state): Extension<AppState>, Path(id): Path<i32>
     ),
     tag = "user",
 )]
-pub async fn find_all(Extension(state): Extension<AppState>, Query(query): Query<UserQuery>) -> Result<ApiOk<Vec<UserResponse>>, ApiError> {
+pub async fn find_all(
+	Extension(state): Extension<AppState>,
+	Query(query): Query<UserQuery>,
+) -> Result<ApiOk<Vec<UserResponse>>, ApiError> {
 	let users = service::user::UserService::find_all(&state.conn, query).await?;
 	Ok(ApiOk(users))
 }

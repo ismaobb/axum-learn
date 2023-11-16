@@ -13,7 +13,10 @@ use crate::AppState;
     ),
     tag = "user",
 )]
-pub async fn create(Extension(state): Extension<AppState>, Json(create_user): Json<Model>) -> Result<ApiOk<Model>, ApiError> {
+pub async fn create(
+	Extension(state): Extension<AppState>,
+	Json(create_user): Json<Model>,
+) -> Result<ApiOk<Model>, ApiError> {
 	let user = service::user::UserService::create(&state.conn, create_user).await?;
 	Ok(ApiOk(user))
 }

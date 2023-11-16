@@ -66,5 +66,8 @@ async fn handle_timeout_error(
 	// the last argument must be the error itself
 	err: BoxError,
 ) -> (StatusCode, String) {
-	(StatusCode::INTERNAL_SERVER_ERROR, format!("`{} {}` failed with {}", method, uri, err))
+	(
+		StatusCode::INTERNAL_SERVER_ERROR,
+		format!("`{} {}` failed with {}", method, uri, err),
+	)
 }
