@@ -77,7 +77,9 @@ impl UserService {
 			.map(Into::into)?;
 
 		tracing::info!("{user:?}");
-		user.role_type = Set(payload.role_type);
+		if payload.role_type.is_some() {
+			user.role_type = Set(payload.role_type);
+		}
 		if payload.name.is_some() {
 			user.name = Set(payload.name.unwrap());
 		}
