@@ -76,16 +76,20 @@ impl UserService {
 			.ok_or(ApiError::UserNotFound(id.to_string()))
 			.map(Into::into)?;
 
-		tracing::info!("{user:?}");
 		if payload.role_type.is_some() {
 			user.role_type = Set(payload.role_type);
 		}
-		if payload.name.is_some() {
-			user.name = Set(payload.name.unwrap());
+
+		if let Some(name) = payload.name {
+			user.name = Set(name);
 		}
-		if payload.password.is_some() {
-			user.password = Set(payload.password.unwrap());
+
+		if let Some(password) = payload.password {
+			user.password = Set(password);
 		}
+
+		tracing::info!("{user:?}");
+
 		user.update(conn)
 			.await
 			.map_err(|error| ApiError::DbError(error.to_string()))
