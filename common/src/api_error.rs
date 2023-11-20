@@ -5,10 +5,10 @@ use thiserror::Error;
 pub enum ApiError {
 	#[error("{0}")]
 	DbError(String),
-	#[error("User {0} Not Found")]
-	UserNotFound(String),
-	#[error("User `{0}` Exist")]
-	UserExist(String),
+	#[error("`{0}` Not Found")]
+	NotFound(String),
+	#[error("`{0}` Exist")]
+	Exist(String),
 }
 
 impl From<sea_orm::DbErr> for ApiError {

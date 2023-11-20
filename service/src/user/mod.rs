@@ -19,7 +19,7 @@ impl UserService {
 			.into_model()
 			.one(conn)
 			.await?
-			.ok_or(ApiError::UserNotFound(id.to_string()))
+			.ok_or(ApiError::NotFound(id.to_string()))
 	}
 
 	pub async fn find_all(conn: &DbConn, query: UserQuery) -> Result<Vec<UserResponse>, ApiError> {
@@ -50,7 +50,7 @@ impl UserService {
 			.is_ok_and(|count| count > 0);
 
 		if exist {
-			return Err(ApiError::UserExist(create_user.user));
+			return Err(ApiError::Exist(create_user.user));
 		}
 
 		let u = user::ActiveModel {
@@ -73,7 +73,7 @@ impl UserService {
 		let mut user: user::ActiveModel = User::find_by_id(id)
 			.one(conn)
 			.await?
-			.ok_or(ApiError::UserNotFound(id.to_string()))
+			.ok_or(ApiError::NotFound(id.to_string()))
 			.map(Into::into)?;
 
 		if payload.role_type.is_some() {

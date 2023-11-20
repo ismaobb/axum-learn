@@ -1,9 +1,11 @@
 use axum::Router;
+use entity::order_accessory;
+use service::order::dto::WebOrderSource;
 use service::user::dto::{CreateUserDto, PatchUserDto, UserResponse};
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 
-use crate::user;
+use crate::{order, user};
 
 #[derive(OpenApi)]
 #[openapi(
@@ -11,13 +13,14 @@ use crate::user;
         user::get::find_one,
         user::get::find_all,
         user::post::create,
-        user::patch::patch_one
+        user::patch::patch_one,
+        order::get::find_one,
     ),
     tags(
-        (name = "user", description = "user"),
-        (name = "user1", description = "user")
+        (name = "user", description = "用户"),
+        (name = "order", description = "订单")
     ),
-    components(schemas(entity::user::Model,UserResponse,CreateUserDto,PatchUserDto))
+    components(schemas(entity::user::Model,UserResponse,CreateUserDto,PatchUserDto,WebOrderSource,order_accessory::Model))
 )]
 struct ApiDoc;
 
