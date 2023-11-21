@@ -1,5 +1,6 @@
 mod doc;
 mod order;
+mod order_accessory;
 mod user;
 
 use std::{env, net::SocketAddr, str::FromStr, time::Duration};
@@ -37,6 +38,7 @@ pub async fn bootstrap() {
 		.route("/", get(|| async { Json(json!({"version":version.to_owned()})) }))
 		.nest("/users", user::route())
 		.nest("/orders", order::route())
+		.nest("/order-accessories", order_accessory::route())
 		.layer(
 			tower::ServiceBuilder::new()
 				// `timeout` will produce an error if the handler takes
