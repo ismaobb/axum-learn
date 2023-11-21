@@ -1,4 +1,5 @@
 use common::api_error::ApiError;
+use entity::order_accessory::Model;
 use entity::{
 	order_accessory::{self, Entity as OrderAccessory},
 	user::Entity as User,
@@ -32,7 +33,8 @@ pub struct WebOrderSource {
 
 	pub customer: Option<String>,
 	pub salesman: String,
-	pub accessories: Vec<entity::order_accessory::Model>,
+	#[schema(value_type = Vec<Model>)]
+	pub accessories: Vec<Model>,
 }
 
 impl WebOrderSource {

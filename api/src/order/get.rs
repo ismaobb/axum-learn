@@ -8,7 +8,7 @@ use crate::AppState;
     get,
     path = "/orders/{id}",
     params(
-        ("id" = u32, Path,)
+        ("id" = u32, Path,description="order id")
     ),
     responses(
         (status = 200, body = WebOrderSource)
