@@ -8,6 +8,8 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
+use crate::order_accessory::dto::PartialOrderDetail;
+
 #[derive(Deserialize, Serialize, Debug, Clone, ToSchema)]
 pub struct WebOrderSource {
 	pub id: u32,
@@ -35,6 +37,8 @@ pub struct WebOrderSource {
 	pub salesman: String,
 	#[schema(value_type = Vec<Model>)]
 	pub accessories: Vec<Model>,
+
+	pub details: Vec<PartialOrderDetail>,
 }
 
 impl WebOrderSource {
@@ -91,6 +95,7 @@ impl WebOrderSource {
 				.filter(order_accessory::Column::OrderId.eq(order.id))
 				.all(conn)
 				.await?,
+			details: vec![],
 		};
 
 		if let Some(customer) = customer {

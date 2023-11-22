@@ -21,4 +21,9 @@ fn test() {
 
 	let x: Result<&str, _> = Err("bar");
 	assert_eq!(x.map_or(42, |v| v.len()), 42);
+
+	let a = [1, 2, 3];
+	let mut iter = a.iter().filter(|&&x| x > 1);
+	assert_eq!(iter.next(), Some(&2));
+	assert_eq!(iter.next(), Some(&3));
 }
