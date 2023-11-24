@@ -20,11 +20,12 @@ impl OrderService {
 	}
 
 	pub async fn find_one(conn: &DbConn, id: u32) -> Result<WebOrderSource, ApiError> {
-		let order = Order::find_by_id(id).one(conn).await?;
+		let order = Order::find_by_id(id)
+			.one(conn)
+			.await?
+			.ok_or(ApiError::NotFound(id.to_string()))?;
+
 		tracing::info!(?order);
-		match order {
-			Some(v) => Ok(WebOrderSource::new(conn, v).await?),
-			None => Err(ApiError::NotFound(id.to_string())),
-		}
+		Ok(WebOrderSource::new(conn, order).await?)
 	}
 }
