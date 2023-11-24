@@ -10,8 +10,8 @@ pub struct Model {
 	pub index: u32,
 	pub r#type: String,
 	pub thickness: u32,
-	#[sea_orm(column_type = "Decimal(Some((10, 0)))", nullable)]
-	pub actual_thickness: Option<Decimal>,
+	#[sea_orm(column_type = "Double", nullable)]
+	pub actual_thickness: Option<f64>,
 	pub width: u32,
 	pub length: u32,
 	pub actual_length: Option<u32>,
