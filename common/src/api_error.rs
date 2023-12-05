@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, response::IntoResponse};
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone)]
 pub enum ApiError {
 	#[error("{0}")]
 	DbError(String),

@@ -16,21 +16,21 @@ panic = 'abort'
 members = ["api", "entity", "service", "middleware", "common", "database"]
 
 [workspace.dependencies]
-axum = "0.6.20"
-axum-extra = { version = "0.8.0", features = ["query"] }
-dotenvy = "0.15.7"
-tokio = { version = "1.33.0", features = ["full"] }
-serde = { version = "1.0.192", features = ["derive"] }
-serde_json = "1.0.108"
-tracing = "0.1.40"
-tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
-tower = { version = "0.4.13", features = ["timeout"] }
-tower-http = { version = "0.4.4", features = ["trace"] }
-utoipa = { version = "4.0.0", features = ["axum_extras"] }
-utoipa-swagger-ui = { version = "4.0.0", features = ["axum"] }
-thiserror = "1.0.50"
-sea-query = "0.30.2"
-sea-orm = { version = "0.12.5", features = [
+axum = "0"
+axum-extra = { version = "0", features = ["query"] }
+dotenvy = "0"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0"
+tracing-subscriber = { version = "0", features = ["env-filter"] }
+tower = { version = "0", features = ["timeout"] }
+tower-http = { version = "0", features = ["trace"] }
+utoipa = { version = "4", features = ["axum_extras"] }
+utoipa-swagger-ui = { version = "5", features = ["axum"] }
+thiserror = "1"
+sea-query = "0"
+sea-orm = { version = "0", features = [
     "runtime-tokio-native-tls",
     "sqlx-mysql",
     "macros",

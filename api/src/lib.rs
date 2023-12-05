@@ -9,7 +9,7 @@ use axum::{
 	error_handling::HandleErrorLayer,
 	http::{Method, StatusCode, Uri},
 	routing::get,
-	BoxError, Extension, Json, Router, Server,
+	BoxError, Extension, Json, Router,
 };
 use sea_orm::DbConn;
 use serde_json::json;
@@ -46,7 +46,6 @@ pub async fn bootstrap() {
 				.layer(HandleErrorLayer::new(handle_timeout_error))
 				.timeout(Duration::from_secs(3)),
 		)
-		// .layer(axum::middleware::from_extractor::<middleware::extract::JsonExtract>())
 		.layer(axum::middleware::map_response(middleware::interceptor::transform))
 		.layer(axum::middleware::map_response(middleware::filter::http_exception))
 		.layer(trace_layer)
@@ -55,7 +54,8 @@ pub async fn bootstrap() {
 
 	let addr = SocketAddr::from_str(&server_url).unwrap();
 	tracing::info!("->> LISTENING on {addr}\n");
-	Server::bind(&addr).serve(app.into_make_service()).await.unwrap();
+	let tcp_listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+	axum::serve(tcp_listener, app.into_make_service()).await.unwrap();
 }
 
 #[derive(Clone)]
