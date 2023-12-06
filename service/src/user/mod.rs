@@ -39,7 +39,7 @@ impl UserService {
 			.into_model::<UserResponse>()
 			.all(conn)
 			.await
-			.map_err(|error| ApiError::DbError(error.to_string()))
+			.map_err(ApiError::DbError)
 	}
 
 	pub async fn create(conn: &DbConn, create_user: user::Model) -> Result<user::Model, ApiError> {
@@ -64,9 +64,7 @@ impl UserService {
 			sign: Set("sign".to_string()),
 		};
 
-		u.insert(conn)
-			.await
-			.map_err(|error| ApiError::DbError(error.to_string()))
+		u.insert(conn).await.map_err(ApiError::DbError)
 	}
 
 	pub async fn patch_one(conn: &DbConn, id: i32, payload: PatchUserDto) -> Result<user::Model, ApiError> {
@@ -90,8 +88,6 @@ impl UserService {
 
 		tracing::info!("{user:?}");
 
-		user.update(conn)
-			.await
-			.map_err(|error| ApiError::DbError(error.to_string()))
+		user.update(conn).await.map_err(ApiError::DbError)
 	}
 }

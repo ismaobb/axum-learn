@@ -1,20 +1,14 @@
 use axum::{http::StatusCode, response::IntoResponse};
 use thiserror::Error;
 
-#[derive(Error, Debug, Clone)]
+#[derive(Error, Debug)]
 pub enum ApiError {
 	#[error("{0}")]
-	DbError(String),
+	DbError(#[from] sea_orm::DbErr),
 	#[error("`{0}` Not Found")]
 	NotFound(String),
 	#[error("`{0}` Exist")]
 	Exist(String),
-}
-
-impl From<sea_orm::DbErr> for ApiError {
-	fn from(value: sea_orm::DbErr) -> Self {
-		Self::DbError(value.to_string())
-	}
 }
 
 impl IntoResponse for ApiError {
@@ -23,8 +17,6 @@ impl IntoResponse for ApiError {
 			ApiError::DbError(_) => StatusCode::INTERNAL_SERVER_ERROR,
 			_ => StatusCode::BAD_REQUEST,
 		};
-		let mut res = code.into_response();
-		res.extensions_mut().insert(self);
-		res
+		code.into_response()
 	}
 }

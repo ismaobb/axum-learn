@@ -26,6 +26,6 @@ impl OrderService {
 			.ok_or(ApiError::NotFound(id.to_string()))?;
 
 		tracing::info!(?order);
-		Ok(WebOrderSource::new(conn, order).await?)
+		WebOrderSource::new(conn, order).await
 	}
 }
