@@ -1,4 +1,5 @@
-use axum::{http::StatusCode, response::IntoResponse};
+use axum::{http::StatusCode, response::IntoResponse, Json};
+use serde_json::json;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
@@ -17,6 +18,7 @@ impl IntoResponse for ApiError {
 			ApiError::DbError(_) => StatusCode::INTERNAL_SERVER_ERROR,
 			_ => StatusCode::BAD_REQUEST,
 		};
-		code.into_response()
+
+		(code, Json(json!({"message:":self.to_string(),"code":-2}))).into_response()
 	}
 }
