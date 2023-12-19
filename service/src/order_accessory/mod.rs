@@ -19,6 +19,7 @@ impl OrderAccessoryService {
 		let OrderAccessoryQuery { line, state } = query;
 		let select = Order::find()
 			.distinct()
+			.select_with(OrderAccessory)
 			.join(
 				sea_orm::JoinType::LeftJoin,
 				Order::belongs_to(OrderAccessory)
@@ -48,8 +49,9 @@ impl OrderAccessoryService {
 					.add(accessory_column::Column::Follow.eq(1)),
 			);
 		let sql = select.build(DbBackend::MySql).to_string();
-		tracing::info!(?sql);
 		let orders = select.all(conn).await?;
+		tracing::info!(?sql);
+
 		let web_order_sources = super::order::OrderService::create_web_order_sources(conn, orders).await?;
 		let latency = Instant::now().duration_since(start).as_millis();
 		tracing::info!(latency);

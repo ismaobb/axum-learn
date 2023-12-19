@@ -3,7 +3,7 @@ mod order;
 mod order_accessory;
 mod user;
 
-use std::{env, net::SocketAddr, str::FromStr, time::Duration};
+use std::{env, time::Duration};
 
 use axum::{
 	error_handling::HandleErrorLayer,
@@ -22,7 +22,7 @@ pub async fn bootstrap() {
 	let version = env!("CARGO_PKG_VERSION");
 	let host = env::var("HOST").expect("HOST is not set in .env file");
 	let port = env::var("PORT").expect("PORT is not set in .env file");
-	let server_url = format!("{host}:{port}");
+	let addr = format!("{host}:{port}");
 
 	let trace_layer = TraceLayer::new_for_http()
 		.make_span_with(DefaultMakeSpan::new().level(Level::INFO))
@@ -52,7 +52,6 @@ pub async fn bootstrap() {
 		.layer(Extension(state))
 		.merge(doc::route());
 
-	let addr = SocketAddr::from_str(&server_url).unwrap();
 	tracing::info!("->> LISTENING on {addr}\n");
 	let tcp_listener = tokio::net::TcpListener::bind(addr).await.unwrap();
 	axum::serve(tcp_listener, app.into_make_service()).await.unwrap();

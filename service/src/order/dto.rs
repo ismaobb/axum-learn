@@ -1,9 +1,6 @@
 use common::api_error::ApiError;
 use entity::order_accessory::Model;
-use entity::{
-	order_accessory::{self, Entity as OrderAccessory},
-	user::Entity as User,
-};
+use entity::user::Entity as User;
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
@@ -42,7 +39,7 @@ pub struct WebOrderSource {
 }
 
 impl WebOrderSource {
-	pub async fn new(conn: &DbConn, order: entity::order::Model) -> Result<Self, ApiError> {
+	pub async fn new(conn: &DbConn, value: (entity::order::Model, Option<Vec<Model>>)) -> Result<Self, ApiError> {
 		let entity::order::Model {
 			id,
 			customer,
@@ -66,7 +63,7 @@ impl WebOrderSource {
 			roll_placement,
 			other,
 			packing,
-		} = order;
+		} = value.0;
 
 		let mut web_order_source = Self {
 			id,
@@ -91,10 +88,7 @@ impl WebOrderSource {
 			packing,
 			customer: Default::default(),
 			salesman: Default::default(),
-			accessories: OrderAccessory::find()
-				.filter(order_accessory::Column::OrderId.eq(order.id))
-				.all(conn)
-				.await?,
+			accessories: value.1.unwrap_or_default(),
 			details: vec![],
 		};
 
