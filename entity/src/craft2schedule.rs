@@ -12,7 +12,25 @@ pub struct Model {
 	pub schedule_id: i32,
 }
 
-#[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
-pub enum Relation {}
+#[derive(Copy, Clone, Debug, EnumIter)]
+pub enum Relation {
+	Craft,
+	Schedule,
+}
+
+impl RelationTrait for Relation {
+	fn def(&self) -> RelationDef {
+		match self {
+			Self::Craft => Entity::belongs_to(super::craft::Entity)
+				.from(Column::CraftId)
+				.to(super::craft::Column::Id)
+				.into(),
+			Self::Schedule => Entity::belongs_to(super::schedule::Entity)
+				.from(Column::ScheduleId)
+				.to(super::schedule::Column::Id)
+				.into(),
+		}
+	}
+}
 
 impl ActiveModelBehavior for ActiveModel {}
