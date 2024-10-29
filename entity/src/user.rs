@@ -3,6 +3,7 @@
 use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+use super::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize, ToSchema)]
 #[sea_orm(table_name = "user")]
@@ -26,3 +27,9 @@ pub struct Model {
 pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
+
+impl super::user::Entity {
+	pub async fn find_by_user_id(id: i32, db: &DbConn) -> Model {
+		User::find_by_id(id).one(db).await.unwrap().unwrap()
+	}
+}

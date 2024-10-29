@@ -19,6 +19,9 @@ use tracing::Level;
 
 #[tokio::main]
 pub async fn bootstrap() {
+	let h = tokio::spawn(async { 1 });
+	let h = h.await.unwrap();
+	println!("{h}");
 	let version = env!("CARGO_PKG_VERSION");
 	let host = env::var("HOST").expect("HOST is not set in .env file");
 	let port = env::var("PORT").expect("PORT is not set in .env file");
@@ -35,9 +38,9 @@ pub async fn bootstrap() {
 
 	// build our application with a single route
 	let app = Router::new()
+		.merge(order::route())
 		.route("/", get(|| async { Json(json!({"version":version.to_owned()})) }))
 		.nest("/users", user::route())
-		.nest("/orders", order::route())
 		.nest("/order-accessories", order_accessory::route())
 		.layer(
 			tower::ServiceBuilder::new()

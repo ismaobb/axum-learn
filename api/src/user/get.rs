@@ -2,17 +2,13 @@ use axum::extract::{Extension, Path};
 use axum_extra::extract::Query;
 use common::{api_error::ApiError, api_ok::ApiOk};
 use service::user::dto::{UserQuery, UserResponse};
+use tracing::instrument;
 
 use crate::AppState;
 
-#[utoipa::path(
-    get,
-    path = "/users/{id}",
-    params(
-        ("id" = u32, Path,)
-    ),
+#[utoipa::path(get,path = "/users/{id}",params(("id" = u32, Path,)),
     responses(
-        (status = 200, body = UserResponse)
+        (status = StatusCode::OK, body = UserResponse)
     ),
     tag = "user",
 )]
@@ -29,10 +25,11 @@ pub async fn find_one(
     path = "/users",
     params(UserQuery),
     responses(
-        (status = 200, body = [UserResponse])
+        (status = StatusCode::OK, body = [UserResponse])
     ),
     tag = "user",
 )]
+#[instrument(level = "info", name = "create_dog", skip_all)]
 pub async fn find_all(
 	Extension(state): Extension<AppState>,
 	Query(query): Query<UserQuery>,

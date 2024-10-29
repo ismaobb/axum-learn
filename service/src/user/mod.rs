@@ -1,10 +1,12 @@
 pub mod dto;
+pub mod code_enum;
 
 use common::api_error::ApiError;
 use entity::user::{self, Entity as User};
 use sea_orm::{
-	ActiveModelTrait, ActiveValue::NotSet, ActiveValue::Set, ColumnTrait, Condition, DbConn, EntityTrait, Iterable,
-	PaginatorTrait, QueryFilter, QuerySelect,
+	ActiveModelTrait,
+	ActiveValue::{NotSet, Set},
+	ColumnTrait, Condition, DbConn, EntityTrait, Iterable, PaginatorTrait, QueryFilter, QuerySelect,
 };
 
 use self::dto::{PatchUserDto, UserQuery, UserResponse};
@@ -23,6 +25,8 @@ impl UserService {
 	}
 
 	pub async fn find_all(conn: &DbConn, query: UserQuery) -> Result<Vec<UserResponse>, ApiError> {
+		// let a = query.role_type_not.as_ref().unwrap();
+		// tracing::info!("{a:?}");
 		User::find()
 			.filter(
 				Condition::all()
@@ -43,6 +47,8 @@ impl UserService {
 	}
 
 	pub async fn create(conn: &DbConn, create_user: user::Model) -> Result<user::Model, ApiError> {
+		// let u1 = create_user.to_owned().into_active_model();
+		// u1.save(conn).await?.try_into_model()?;
 		let exist = User::find()
 			.filter(user::Column::User.eq(create_user.user.clone()))
 			.count(conn)

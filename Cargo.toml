@@ -7,13 +7,17 @@ edition = "2021"
 
 [profile.release]
 codegen-units = 1
-debug = false
-lto = true
+lto = "fat"
 opt-level = "z"   # Optimize for size.
 panic = 'abort'
+strip = "symbols"
 
 [workspace]
 members = ["api", "entity", "service", "middleware", "common", "database"]
+
+[workspace.package]
+version = "0.2.0"
+edition = "2021"
 
 [workspace.dependencies]
 axum = "0"
@@ -41,3 +45,10 @@ dotenvy.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
 api = { path = "api" }
+
+[dev-dependencies]
+# 测试
+
+[[bin]]
+name="ims_oa_rs"
+path="src/main.rs"

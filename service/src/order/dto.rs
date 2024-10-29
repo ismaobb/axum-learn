@@ -1,7 +1,4 @@
-use common::api_error::ApiError;
 use entity::order_accessory::Model;
-use entity::user::Entity as User;
-use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -38,12 +35,18 @@ pub struct WebOrderSource {
 	pub details: Vec<PartialOrderDetail>,
 }
 
-impl WebOrderSource {
-	pub async fn new(conn: &DbConn, value: (entity::order::Model, Option<Vec<Model>>)) -> Result<Self, ApiError> {
+impl From<(entity::order::Model, Vec<entity::order_accessory::Model>)> for WebOrderSource {
+	fn from(value: (entity::order::Model, Vec<entity::order_accessory::Model>)) -> Self {
+		let mut w = WebOrderSource::from(value.0);
+		w.accessories = value.1;
+		w
+	}
+}
+
+impl From<entity::order::Model> for WebOrderSource {
+	fn from(val: entity::order::Model) -> Self {
 		let entity::order::Model {
 			id,
-			customer,
-			salesman,
 			job_order,
 			deal_date,
 			trade_mode,
@@ -63,9 +66,9 @@ impl WebOrderSource {
 			roll_placement,
 			other,
 			packing,
-		} = value.0;
-
-		let mut web_order_source = Self {
+			..
+		} = val;
+		Self {
 			id,
 			job_order,
 			deal_date: deal_date.map(|t| t.format("%Y-%m-%d %H:%M:%S").to_string()),
@@ -88,16 +91,8 @@ impl WebOrderSource {
 			packing,
 			customer: Default::default(),
 			salesman: Default::default(),
-			accessories: value.1.unwrap_or_default(),
+			accessories: Default::default(),
 			details: vec![],
-		};
-
-		if let Some(customer) = customer {
-			web_order_source.customer = User::find_by_id(customer).one(conn).await?.map(|u| u.user);
 		}
-
-		web_order_source.salesman = User::find_by_id(salesman).one(conn).await?.unwrap().user;
-
-		Ok(web_order_source)
 	}
 }
